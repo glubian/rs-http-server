@@ -1,0 +1,25 @@
+[package]
+name = "http_server"
+description = "A simple HTTP server. For science."
+version = "0.0.0"
+authors = ["Grzegorz Łubian"]
+publish = false
+edition = "2021"
+
+[[bin]]
+name = "http-server"
+path = "src/main.rs"
+
+[dependencies]
+pico-args = { workspace = true, features = [
+    "eq-separator",
+    "short-space-opt",
+    "combined-flags",
+] }
+simplelog.workspace = true
+log.workspace = true
+bytes.workspace = true
+handlebars.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+http_lib.workspace = true

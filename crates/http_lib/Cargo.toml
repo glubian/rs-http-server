@@ -1,0 +1,13 @@
+[package]
+name = "http_lib"
+description = "HTTP types."
+version = "0.0.0"
+authors = ["Grzegorz Łubian"]
+publish = false
+edition = "2021"
+
+[dependencies]
+httpdate.workspace = true
+bytes.workspace = true
+indexmap.workspace = true
+once_cell.workspace = true
