@@ -99,6 +99,7 @@ impl Config {
         } else {
             self.host = partial.host;
         }
+        self.verbosity = partial.verbosity;
     }
 }
 
