@@ -2,7 +2,7 @@ use std::fmt;
 
 use bytes::{Buf, Bytes};
 
-use crate::Advance as _;
+use crate::{Advance as _, transcode::ascii_digit_to_u8};
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Malformed;
@@ -31,11 +31,6 @@ impl fmt::Display for Version {
             write!(f, "HTTP/{major}.{minor}")
         }
     }
-}
-
-#[inline]
-fn ascii_digit_to_u8(char: u8) -> u8 {
-    char & 0xcf
 }
 
 impl Version {

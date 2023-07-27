@@ -4,6 +4,7 @@ pub mod method;
 pub mod request;
 pub mod response;
 pub mod version;
+pub mod transcode;
 
 pub use field::Fields;
 pub use version::Version;
