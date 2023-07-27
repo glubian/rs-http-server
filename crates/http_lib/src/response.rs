@@ -92,18 +92,10 @@ impl Response {
         self.body_of_type(body.into(), "text/plain".into());
     }
 
-    pub fn no_body(&mut self, body: &str) {
-        self.no_body_of_type(body.as_bytes(), "text/plain".into());
-    }
-
     pub fn body_of_type(&mut self, body: Bytes, content_type: Bytes) {
-        self.no_body_of_type(&body, content_type);
-        self.body = body;
-    }
-
-    pub fn no_body_of_type(&mut self, body: &[u8], content_type: Bytes) {
         self.add_header_value("Content-Length".into(), body.len().to_string().into());
         self.add_header_value("Content-Type".into(), content_type);
+        self.body = body;
     }
 
     pub fn from_bytes(bytes: &mut Bytes) -> Result<Self, ParsingError> {
@@ -188,18 +180,8 @@ impl Builder {
         self
     }
 
-    pub fn no_body(mut self, body: &str) -> Self {
-        self.response.no_body(body);
-        self
-    }
-
     pub fn body_of_type(mut self, body: Bytes, content_type: Bytes) -> Self {
         self.response.body_of_type(body, content_type);
-        self
-    }
-
-    pub fn no_body_of_type(mut self, body: &[u8], content_type: Bytes) -> Self {
-        self.response.no_body_of_type(body, content_type);
         self
     }
 

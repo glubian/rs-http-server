@@ -1,5 +1,6 @@
 use std::fs;
 
+use bytes::Bytes;
 use handlebars::Handlebars;
 use log::{error, info, warn};
 use serde::Serialize;
@@ -73,6 +74,15 @@ impl Router {
             return Response::new(Code::MisdirectedRequest);
         }
 
+        let mut res = self.get_resource_for_path(req);
+        if req.method == Method::Head {
+            res.body = Bytes::new();
+        }
+
+        res
+    }
+    
+    fn get_resource_for_path(&self, req: &Request) -> Response {
         if !matches!(req.method, Method::Get | Method::Head) {
             return Response::new(Code::MethodNotAllowed);
         }
@@ -104,9 +114,6 @@ impl Router {
 
             let data = DirTemplateData { path, contents };
             match self.handlebars.render("dir", &data) {
-                Ok(body) if req.method == Method::Head => Response::builder(Code::Ok)
-                    .no_body_of_type(body.as_bytes(), "text/html".into())
-                    .finish(),
                 Ok(body) => Response::builder(Code::Ok)
                     .body_of_type(body.into(), "text/html".into())
                     .finish(),
