@@ -81,7 +81,7 @@ impl Router {
 
         res
     }
-    
+
     fn get_resource_for_path(&self, req: &Request) -> Response {
         if !matches!(req.method, Method::Get | Method::Head) {
             return Response::new(Code::MethodNotAllowed);
@@ -123,8 +123,13 @@ impl Router {
                 }
             }
         } else {
-            match fs::read_to_string(format!(".{path}")) {
-                Ok(body) => Response::builder(Code::Ok).body(body).finish(),
+            match fs::read(format!(".{path}")) {
+                Ok(body) => {
+                    let mime_type = mime_guess::from_path(path).first_or_octet_stream();
+                    Response::builder(Code::Ok)
+                        .body_of_type(body.into(), mime_type.to_string().into())
+                        .finish()
+                }
                 Err(_) => Response::builder(Code::NotFound)
                     .body("Not found".to_string())
                     .finish(),

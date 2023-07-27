@@ -23,3 +23,5 @@ handlebars.workspace = true
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
 http_lib.workspace = true
+mime.workspace = true
+mime_guess.workspace = true
