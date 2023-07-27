@@ -40,28 +40,23 @@ impl Version {
         }
 
         if bytes.len() >= "1.1".len() && bytes.get(1).is_some_and(|&b| b == b'.') {
-            let major_char = bytes[0];
-            let minor_char = bytes[2];
-
-            if !(major_char.is_ascii_digit() && minor_char.is_ascii_digit()) {
-                return Err(Malformed);
-            }
-
-            let major_digit = ascii_digit_to_u8(major_char);
-            let minor_digit = ascii_digit_to_u8(minor_char);
-            bytes.advance(3);
-            return Ok(Self(major_digit, minor_digit));
+            let major_digit = ascii_digit_to_u8(bytes[0]);
+            let minor_digit = ascii_digit_to_u8(bytes[2]);
+            return if major_digit < 10 && minor_digit < 10 {
+                bytes.advance(3);
+                Ok(Self(major_digit, minor_digit))
+            } else {
+                Err(Malformed)
+            };
         }
 
-        let major_char = bytes[0];
-
-        if !major_char.is_ascii_digit() {
-            return Err(Malformed);
+        let major_digit = ascii_digit_to_u8(bytes[0]);
+        if major_digit < 10 {
+            bytes.advance(1);
+            Ok(Self(major_digit, 0))
+        } else {
+            Err(Malformed)
         }
-
-        let major_digit = ascii_digit_to_u8(major_char);
-        bytes.advance(1);
-        Ok(Self(major_digit, 0))
     }
 
     pub fn write_to_buffer(self, buffer: &mut Vec<u8>) {
