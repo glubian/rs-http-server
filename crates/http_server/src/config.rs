@@ -94,10 +94,11 @@ impl Config {
     pub fn apply_optional(&mut self, partial: OptionalConfigValues) {
         apply_if_some!(self.address, partial.address);
         apply_if_some!(self.port, partial.port);
-        if partial.host.is_empty() && is_localhost(self.address) {
-            self.host = "localhost".to_string();
-        } else {
+
+        if !partial.host.is_empty() {
             self.host = partial.host;
+        } else if is_localhost(self.address) {
+            self.host = "localhost".to_string();
         }
         self.verbosity = partial.verbosity;
     }
@@ -116,7 +117,7 @@ impl Default for Config {
         Self {
             address: Ipv4Addr::LOCALHOST.into(),
             port: 8000,
-            host: "localhost".to_string(),
+            host: String::new(),
             verbosity: log::LevelFilter::Error,
         }
     }
