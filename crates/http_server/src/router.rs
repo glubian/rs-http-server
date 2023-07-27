@@ -6,7 +6,7 @@ use log::{error, info, warn};
 use serde::Serialize;
 
 use crate::config::Config;
-use http_lib::{response::Code, Method, Request, Response};
+use http_lib::{response::Code, transcode::percent_decode, Method, Request, Response};
 
 pub const DEFAULT_PORT: u16 = 80;
 
@@ -100,7 +100,11 @@ impl Router {
             return Response::new(Code::BadRequest);
         }
 
-        let Ok(path) = std::str::from_utf8(&req.path) else {
+        let Ok(path) = percent_decode(&req.path) else {
+            return Response::new(Code::BadRequest);
+        };
+
+        let Ok(path) = std::str::from_utf8(&path) else {
             return Response::new(Code::BadRequest);
         };
 
