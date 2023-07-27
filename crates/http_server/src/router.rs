@@ -13,6 +13,7 @@ pub const DEFAULT_PORT: u16 = 80;
 // Responds to requests with appropriate resources.
 pub struct Router {
     handlebars: Handlebars<'static>,
+    root: String,
     host_ip: Vec<u8>,
     host_ip_without_port: usize,
     host_ns: Vec<u8>,
@@ -31,6 +32,7 @@ impl Router {
             address,
             port,
             host,
+            root,
             ..
         } = config;
 
@@ -50,6 +52,7 @@ impl Router {
 
         Self {
             handlebars,
+            root: root.trim_end_matches('/').to_string(),
             host_ip: host_ip.into(),
             host_ip_without_port,
             host_ns: host_ns.into(),
@@ -101,8 +104,9 @@ impl Router {
             return Response::new(Code::BadRequest);
         };
 
+        let real_path = self.root.clone() + path;
         if req.path.last().is_some_and(|&b| b == b'/') {
-            let contents = match fs::read_dir(format!(".{path}")) {
+            let contents = match fs::read_dir(&real_path) {
                 Ok(read_dir) => read_file_names(read_dir),
                 Err(err) => {
                     warn!("Failed to read dir: {err}");
@@ -123,7 +127,7 @@ impl Router {
                 }
             }
         } else {
-            match fs::read(format!(".{path}")) {
+            match fs::read(&real_path) {
                 Ok(body) => {
                     let mime_type = mime_guess::from_path(path).first_or_octet_stream();
                     Response::builder(Code::Ok)
