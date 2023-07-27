@@ -68,6 +68,7 @@ pub struct OptionalConfigValues {
     pub port: Option<u16>,
     pub host: String,
     pub verbosity: log::LevelFilter,
+    pub root: String,
 }
 
 impl OptionalConfigValues {
@@ -79,6 +80,7 @@ impl OptionalConfigValues {
                 .opt_value_from_str("--host")
                 .map(Option::unwrap_or_default)?,
             verbosity: parse_verbosity(args)?,
+            root: args.free_from_str().unwrap_or_default(),
         })
     }
 }
@@ -88,6 +90,7 @@ pub struct Config {
     pub port: u16,
     pub host: String,
     pub verbosity: log::LevelFilter,
+    pub root: String,
 }
 
 impl Config {
@@ -100,6 +103,11 @@ impl Config {
         } else if is_localhost(self.address) {
             self.host = "localhost".to_string();
         }
+
+        if !partial.root.is_empty() {
+            self.root = partial.root;
+        }
+
         self.verbosity = partial.verbosity;
     }
 }
@@ -118,6 +126,7 @@ impl Default for Config {
             address: Ipv4Addr::LOCALHOST.into(),
             port: 8000,
             host: String::new(),
+            root: ".".to_string(),
             verbosity: log::LevelFilter::Error,
         }
     }

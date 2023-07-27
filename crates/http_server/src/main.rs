@@ -22,7 +22,7 @@ const VERSION: &str = "http-server, version 0.0.0";
 
 const HELP: &str = "\
 USAGE:
-    http-server [OPTIONS]
+    http-server [OPTIONS] [ROOT_DIR]
 
 OPTIONS:
     -a --address <ADDRESS>      Address to use
